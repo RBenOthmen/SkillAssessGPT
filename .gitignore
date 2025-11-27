@@ -1,0 +1,6 @@
+.env
+.kiro
+.idea
+MIGRATION_TO_GEMINI.md
+outputs
+src/outputs
