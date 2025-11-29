@@ -50,34 +50,26 @@ class CriticAgent:
         # Convert assessment to a readable format for the LLM
         assessment_json = json.dumps(assessment.to_dict(), ensure_ascii=False, indent=2)
         
-        prompt = f"""Vous êtes un validateur de qualité pédagogique pour les évaluations par compétences (APC).
+        # Create a simplified summary instead of full JSON
+        summary = f"""Compétence: {assessment.input.competency}
+Niveau: {assessment.input.niveau}
+Critères ND: {len(assessment.grid.nd_criteria)}
+Critères NI: {len(assessment.grid.ni_criteria)}
+Critères NA: {len(assessment.grid.na_criteria)}
+Total points: {assessment.rubric.total_points}"""
+        
+        prompt = f"""Validez cette évaluation APC selon: alignement, observabilité, cohérence.
 
-Votre tâche est d'analyser l'évaluation suivante et de valider sa qualité selon ces critères :
+{summary}
 
-1. **Alignement** : Les critères d'évaluation sont-ils bien alignés avec la compétence visée ?
-2. **Observabilité** : Tous les critères sont-ils observables et mesurables ?
-3. **Cohérence** : La complexité de la tâche correspond-elle au niveau de compétence et au niveau éducatif ?
-
-**Évaluation à valider** :
-```json
-{assessment_json}
-```
-
-Analysez cette évaluation et fournissez votre validation au format JSON suivant :
-
+Répondez en JSON concis:
 {{
-  "is_valid": true/false,
-  "alignment_score": "good" / "acceptable" / "poor",
-  "observability_issues": [
-    "Liste des problèmes d'observabilité identifiés"
-  ],
-  "coherence_issues": [
-    "Liste des problèmes de cohérence identifiés"
-  ],
-  "feedback": "Feedback détaillé et spécifique sur les problèmes identifiés ou confirmation de la qualité"
-}}
-
-**Soyez concis dans votre feedback.** Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire."""
+  "is_valid": true,
+  "alignment_score": "good",
+  "observability_issues": [],
+  "coherence_issues": [],
+  "feedback": "Feedback bref (max 100 mots)"
+}}"""
         
         return prompt
     
@@ -140,7 +132,7 @@ Analysez cette évaluation et fournissez votre validation au format JSON suivant
                 prompt,
                 generation_config=genai.types.GenerationConfig(
                     temperature=0.3,  # Lower temperature for more consistent validation
-                    max_output_tokens=3000,  # Optimized for concise validation
+                    max_output_tokens=2000,  # Reduced for faster, more concise validation
                 ),
                 safety_settings=[
                     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},

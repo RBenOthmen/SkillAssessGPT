@@ -1,10 +1,3 @@
-"""
-Main Pipeline for SkillAssessGPT.
-
-This module contains the SkillAssessGPT class that orchestrates the complete
-assessment generation pipeline: input collection, generation, validation, and export.
-"""
-
 import os
 import sys
 from typing import Tuple, Optional
@@ -18,23 +11,8 @@ from src.exporter import ExportModule
 
 
 class SkillAssessGPT:
-    """
-    Main pipeline orchestrator for SkillAssessGPT.
-    
-    This class coordinates the entire workflow from input collection through
-    generation, validation, and export of APC assessment materials.
-    """
-    
+
     def __init__(self, api_key: Optional[str] = None):
-        """
-        Initialize the SkillAssessGPT pipeline.
-        
-        Args:
-            api_key: DeepSeek API key (if None, loads from environment)
-            
-        Raises:
-            ValueError: If API key is not provided and not found in environment
-        """
         # Load environment variables
         load_dotenv()
         
@@ -54,21 +32,6 @@ class SkillAssessGPT:
         self.exporter = ExportModule()
     
     def run(self) -> Tuple[AssessmentOutput, ValidationResult]:
-        """
-        Run the complete assessment generation pipeline.
-        
-        This method orchestrates all stages:
-        1. Collect user inputs
-        2. Generate assessment with LLM
-        3. Validate assessment quality
-        4. Export results to JSON and Markdown
-        
-        Returns:
-            Tuple of (AssessmentOutput, ValidationResult)
-            
-        Raises:
-            Exception: If any stage fails critically
-        """
         print("=" * 60)
         print("SkillAssessGPT - Générateur d'Évaluations APC")
         print("=" * 60)
@@ -121,6 +84,7 @@ class SkillAssessGPT:
                     print(f"   - {len(validation.coherence_issues)} problème(s) de cohérence")
         except Exception as e:
             print(f"\n⚠️  Avertissement : Validation incomplète : {str(e)}")
+            print("   L'évaluation sera exportée sans validation.")
             # Create a fallback validation result
             validation = ValidationResult(
                 is_valid=False,
@@ -161,15 +125,6 @@ class SkillAssessGPT:
         return assessment, validation
     
     def _generate_filename(self, competency: str) -> str:
-        """
-        Generate a safe filename from the competency description.
-        
-        Args:
-            competency: Competency description text
-            
-        Returns:
-            Safe filename string
-        """
         # Take first 50 characters and clean up
         filename = competency[:50].strip()
         
@@ -190,15 +145,6 @@ class SkillAssessGPT:
         json_path: str,
         md_path: str
     ):
-        """
-        Display completion summary with file paths and key information.
-        
-        Args:
-            assessment: Generated assessment output
-            validation: Validation result
-            json_path: Path to JSON export file
-            md_path: Path to Markdown export file
-        """
         print("\n" + "=" * 60)
         print("✨ Génération terminée avec succès!")
         print("=" * 60)
@@ -218,18 +164,17 @@ class SkillAssessGPT:
         if validation.is_valid:
             print("✅ Statut : Validé")
         else:
-            print("⚠️  Statut : Validation avec remarques")
+            print("⚠️  Statut : Non validé (mais évaluation générée)")
             if validation.feedback:
-                print(f"\n💬 Feedback : {validation.feedback[:200]}...")
+                print(f"\n💬 Feedback :")
+                print(f"   {validation.feedback}")
+                print("\nNote: L'évaluation générée reste utilisable. Consultez les fichiers exportés.")
         
         print()
         print("=" * 60)
 
 
 def main():
-    """
-    Entry point for command-line execution.
-    """
     try:
         pipeline = SkillAssessGPT()
         pipeline.run()

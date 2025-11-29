@@ -12,17 +12,6 @@ from datetime import datetime
 
 @dataclass
 class CompetencyInput:
-    """
-    Input data structure for competency and context parameters.
-    
-    Attributes:
-        competency: Main competency description
-        element: Specific competency element (optional)
-        niveau: Educational level (e.g., "Licence 2")
-        parcours: Program/track (e.g., "Informatique")
-        specialite: Specialization (e.g., "Développement Web")
-        duree: Duration (e.g., "2 heures")
-    """
     competency: str
     element: str = ""
     niveau: str = ""
@@ -69,14 +58,6 @@ class CompetencyInput:
 
 @dataclass
 class Criterion:
-    """
-    A single evaluation criterion with indicators and point value.
-    
-    Attributes:
-        description: Description of the criterion
-        indicators: List of observable indicators
-        points: Point value assigned to this criterion
-    """
     description: str
     indicators: List[str] = field(default_factory=list)
     points: int = 0
@@ -106,14 +87,6 @@ class Criterion:
 
 @dataclass
 class APCGrid:
-    """
-    APC (Approche Par Compétences) grid with three competency levels.
-    
-    Attributes:
-        nd_criteria: List of criteria for Non Développé level
-        ni_criteria: List of criteria for Niveau Intermédiaire level
-        na_criteria: List of criteria for Niveau Attendu level
-    """
     nd_criteria: List[Criterion] = field(default_factory=list)
     ni_criteria: List[Criterion] = field(default_factory=list)
     na_criteria: List[Criterion] = field(default_factory=list)
@@ -147,15 +120,6 @@ class APCGrid:
 
 @dataclass
 class EvaluationSituation:
-    """
-    Authentic evaluation situation with context and task.
-    
-    Attributes:
-        context: Authentic context description
-        task: Complex task to perform
-        instructions: Clear student instructions
-        duration: Expected duration
-    """
     context: str = ""
     task: str = ""
     instructions: str = ""
@@ -190,16 +154,6 @@ class EvaluationSituation:
 
 @dataclass
 class ScoringRubric:
-    """
-    Scoring rubric with point distribution across competency levels.
-    
-    Attributes:
-        total_points: Total points in the rubric (should be 20 or 100)
-        nd_range: Point range for ND level (min, max)
-        ni_range: Point range for NI level (min, max)
-        na_range: Point range for NA level (min, max)
-        criteria_points: Dictionary mapping criterion descriptions to point values
-    """
     total_points: int = 0
     nd_range: Tuple[int, int] = (0, 0)
     ni_range: Tuple[int, int] = (0, 0)
@@ -240,16 +194,6 @@ class ScoringRubric:
 
 @dataclass
 class AssessmentOutput:
-    """
-    Complete assessment output including grid, situation, and rubric.
-    
-    Attributes:
-        input: Original competency input
-        grid: Generated APC grid
-        situation: Evaluation situation
-        rubric: Scoring rubric
-        generated_at: Timestamp of generation
-    """
     input: CompetencyInput
     grid: APCGrid
     situation: EvaluationSituation
@@ -285,17 +229,6 @@ class AssessmentOutput:
 
 @dataclass
 class ValidationResult:
-    """
-    Result of critic agent validation.
-    
-    Attributes:
-        is_valid: Whether the assessment passed validation
-        alignment_score: Score for competency-criteria alignment ("good", "acceptable", "poor")
-        observability_issues: List of issues with criterion observability
-        coherence_issues: List of issues with task-competency coherence
-        feedback: Detailed feedback text
-        validated_at: Timestamp of validation
-    """
     is_valid: bool = False
     alignment_score: str = ""
     observability_issues: List[str] = field(default_factory=list)

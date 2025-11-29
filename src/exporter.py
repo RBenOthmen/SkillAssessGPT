@@ -1,10 +1,3 @@
-"""
-Export Module for SkillAssessGPT.
-
-This module contains the ExportModule class that exports assessment outputs
-and validation results to JSON and Markdown formats.
-"""
-
 import json
 import os
 from typing import Optional
@@ -14,25 +7,12 @@ from src.models import AssessmentOutput, ValidationResult
 
 
 class ExportModule:
-    """
-    Export module that formats and saves assessment outputs.
-    
-    This module handles exporting assessment grids, evaluation situations,
-    scoring rubrics, and validation results to both JSON and Markdown formats.
-    """
-    
+
     def __init__(self, output_dir: str = "outputs"):
-        """
-        Initialize the export module.
-        
-        Args:
-            output_dir: Directory where output files will be saved (default: "outputs")
-        """
         self.output_dir = output_dir
         self._ensure_output_dir()
     
     def _ensure_output_dir(self):
-        """Create output directory if it doesn't exist."""
         try:
             Path(self.output_dir).mkdir(parents=True, exist_ok=True)
         except Exception as e:
@@ -44,20 +24,6 @@ class ExportModule:
         validation: ValidationResult,
         filepath: str
     ) -> str:
-        """
-        Export assessment and validation to JSON format.
-        
-        Args:
-            assessment: The assessment output to export
-            validation: The validation result to export
-            filepath: Path where the JSON file will be saved
-            
-        Returns:
-            Full path to the created JSON file
-            
-        Raises:
-            Exception: If file writing fails
-        """
         try:
             # Combine assessment and validation data
             export_data = {
@@ -88,23 +54,6 @@ class ExportModule:
         validation: ValidationResult,
         filepath: str
     ) -> str:
-        """
-        Export assessment and validation to Markdown format.
-        
-        Creates a readable Markdown document with formatted tables for the
-        APC grid and clear sections for all assessment components.
-        
-        Args:
-            assessment: The assessment output to export
-            validation: The validation result to export
-            filepath: Path where the Markdown file will be saved
-            
-        Returns:
-            Full path to the created Markdown file
-            
-        Raises:
-            Exception: If file writing fails
-        """
         try:
             # Build Markdown content
             md_content = self._build_markdown_content(assessment, validation)
@@ -131,16 +80,6 @@ class ExportModule:
         assessment: AssessmentOutput,
         validation: ValidationResult
     ) -> str:
-        """
-        Build the Markdown content from assessment and validation data.
-        
-        Args:
-            assessment: The assessment output
-            validation: The validation result
-            
-        Returns:
-            Formatted Markdown string
-        """
         lines = []
         
         # Title and metadata
@@ -273,15 +212,6 @@ class ExportModule:
         return "\n".join(lines)
     
     def _format_criteria_table(self, criteria: list) -> str:
-        """
-        Format a list of criteria as a Markdown table.
-        
-        Args:
-            criteria: List of Criterion objects
-            
-        Returns:
-            Formatted Markdown table string
-        """
         lines = []
         lines.append("| Critère | Indicateurs | Points |")
         lines.append("|---------|-------------|--------|")

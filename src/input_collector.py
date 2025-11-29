@@ -1,25 +1,10 @@
-"""
-Input collection module for SkillAssessGPT.
-
-This module handles user input collection and validation for competency
-and context parameters. It supports French character input and provides
-clear error messages for missing or invalid fields.
-"""
-
 import sys
 from typing import Optional
 from src.models import CompetencyInput
 
 
 class InputCollector:
-    """
-    Collects and validates user inputs for competency assessment generation.
-    
-    This class provides an interactive interface for gathering all required
-    information from the user, including competency description and context
-    parameters (niveau, parcours, spécialité, durée).
-    """
-    
+
     def __init__(self):
         """Initialize the InputCollector."""
         # Ensure UTF-8 encoding for French character support
@@ -29,23 +14,6 @@ class InputCollector:
             sys.stdin.reconfigure(encoding='utf-8')
     
     def collect_inputs(self) -> CompetencyInput:
-        """
-        Collect all required inputs from the user interactively.
-        
-        Prompts the user for:
-        - Competency description (required)
-        - Competency element (optional)
-        - Educational level/niveau (required)
-        - Program/parcours (required)
-        - Specialization/spécialité (required)
-        - Duration/durée (required)
-        
-        Returns:
-            CompetencyInput: Validated input data structure
-            
-        Raises:
-            ValueError: If validation fails after user provides inputs
-        """
         print("=== SkillAssessGPT - Collecte des informations ===\n")
         
         # Collect competency (required)
@@ -56,7 +24,7 @@ class InputCollector:
         
         # Collect element (optional)
         element = self._prompt_optional(
-            "Élément de compétence (optionnel)",
+            "Élément de compétence",
             "Précisez un élément spécifique de la compétence si nécessaire"
         )
         
@@ -104,18 +72,6 @@ class InputCollector:
             raise ValueError(f"Erreur de validation: {str(e)}")
     
     def validate_inputs(self, input_data: dict) -> bool:
-        """
-        Validate that all required input fields are non-empty.
-        
-        Args:
-            input_data: Dictionary containing input fields
-            
-        Returns:
-            bool: True if all required fields are valid, False otherwise
-            
-        Note:
-            This method prints error messages for any missing fields.
-        """
         required_fields = {
             'competency': 'Compétence',
             'niveau': 'Niveau d\'études',
@@ -140,16 +96,6 @@ class InputCollector:
         return True
     
     def _prompt_required(self, field_name: str, hint: str) -> str:
-        """
-        Prompt for a required field and ensure it's not empty.
-        
-        Args:
-            field_name: Name of the field to display
-            hint: Hint text to help the user
-            
-        Returns:
-            str: Non-empty user input
-        """
         while True:
             print(f"\n{field_name} (requis):")
             print(f"  {hint}")
@@ -161,16 +107,6 @@ class InputCollector:
                 print(f"❌ Le champ '{field_name}' ne peut pas être vide. Veuillez réessayer.")
     
     def _prompt_optional(self, field_name: str, hint: str) -> str:
-        """
-        Prompt for an optional field.
-        
-        Args:
-            field_name: Name of the field to display
-            hint: Hint text to help the user
-            
-        Returns:
-            str: User input (may be empty)
-        """
         print(f"\n{field_name}:")
         print(f"  {hint}")
         value = input("> ").strip()
